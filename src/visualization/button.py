@@ -10,7 +10,7 @@ class Button:
             raise ValueError(f"Cannot find font named {Config.FONT_NAME}")
         self.rect = pygame.Rect(x, y, w, h)
         self.text = text
-        self.text_surface = font.render(text, True, Config.TEXT_COLOR)
+        self.text_surface = font.render(text, True, Config.BUTTON_TEXT_COLOR)
         self.active = False
 
     def draw(self, screen):
@@ -34,7 +34,7 @@ class Button:
 class InputBox:
     def __init__(self, x, y, w, h, text=''):
         self.rect = pygame.Rect(x, y, w, h)
-        self.color = COLOR_INACTIVE
+        self.color = Config.INPUT_COLOR_INACTIVE
         self.text = text
         self.txt_surface = FONT.render(text, True, self.color)
         self.active = False
@@ -45,7 +45,7 @@ class InputBox:
                 self.active = not self.active
             else:
                 self.active = False
-            self.color = COLOR_ACTIVE if self.active else COLOR_INACTIVE
+            self.color = Config.INPUT_COLOR_ACTIVE if self.active else Config.INPUT_COLOR_INACTIVE
         if event.type == pygame.KEYDOWN:
             if self.active:
                 if event.key == pygame.K_RETURN:

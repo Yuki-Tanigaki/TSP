@@ -3,12 +3,9 @@ import numpy as np
 from config import Config
 from tsp import TSP
 from src.visualization.main_screen import Main_Screen
+from src.visualization.setting_screen import Setting_Screen
 
 class Launcher:
-    # 画面の状態を管理
-    MAIN_SCREEN = "main"
-    SETTINGS_SCREEN = "settings"
-
     def __init__(self):
         """ Pygameの初期設定 """
         pygame.init()
@@ -16,28 +13,34 @@ class Launcher:
         self.screen = pygame.display.set_mode((Config.DEFAULT_WIDTH, Config.DEFAULT_HEIGHT + Config.UI_HEIGHT + Config.DSP_HEIGHT), pygame.RESIZABLE)
         self.clock = pygame.time.Clock()
         self.running = True
-        self.current_screen = self.MAIN_SCREEN  # 初期状態はメイン画面
+        self.current_screen = Config.MAIN_SCREEN  # 初期状態はメイン画面
 
-        """ メイン画面の初期設定 """
+        """ 画面の初期設定 """
         self.main_screen = Main_Screen(self.screen)
+        self.setting_screen = Setting_Screen(self.screen)
 
         """ TSPの初期設定 """
-        self.tsp = []
+        self.tsp = None
         for _ in range(Config.DEFAULT_OBJECTIVES):
             self.tsp = TSP(num_cities=Config.DEFAULT_CITIES, coord_min=Config.COORD_MIN, coord_max=Config.COORD_MAX)
+
+        self.main_screen.set_tsp(self.tsp)
+        self.setting_screen.set_tsp(self.tsp)
 
         """ GAの初期設定 """
         rng = np.random.default_rng(42)
 
+
     def run(self):
         """ メインループ """
         while self.running:
-            for event in pygame.event.get():
-                if event.type == pygame.QUIT:  # バツでソフトを終了
-                        self.running = False
-            if self.current_screen == self.MAIN_SCREEN:
-                self.main_screen.handle_events(pygame.event.get())
+            events = pygame.event.get()
+            if self.current_screen == Config.MAIN_SCREEN:
+                self.running, self.current_screen, self.screen = self.main_screen.handle_events(events, self.screen)
                 self.main_screen.draw(self.screen)
+            if self.current_screen == Config.SETTINGS_SCREEN:
+                self.running, self.current_screen, self.screen = self.setting_screen.handle_events(events, self.screen)
+                self.setting_screen.draw(self.screen)
             # self.screen.fill(Config.BG_COLOR)
             # self.handle_events()
             # self.draw()

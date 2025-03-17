@@ -2,35 +2,28 @@ import pygame
 import numpy as np
 
 from src.config import Config
-from src.visualization.button import Button
+from src.visualization.button import Button, InputBox
 
-class Main_Screen:
+class Setting_Screen:
     # 使用ボタン
-    RESET_B, UNDO_B, SETTING_B, QUIT_B = "リセット(R)", "やり直し(Z)", "ゲーム設定(S)", "終了(Q)"
-    BUTTONS = [RESET_B, UNDO_B, SETTING_B, QUIT_B]
+    APPLY_B, RETURN_B = "設定を適用(A)", "ゲームに戻る(R)"
+    BUTTONS = [APPLY_B, RETURN_B]
+    INPUT_CITIES, INPUT_OBJECTIVES = "都市数", "目的数"
+    INPUTS = [INPUT_CITIES, INPUT_OBJECTIVES]
 
     def __init__(self, screen):
-        """ メイン画面の初期設定 """
-        font_name = pygame.font.match_font(Config.FONT_NAME)
+        """ 設定画面の初期設定 """
+        # ボタンリスト
+        self.buttons = self._create_buttons(screen)
+
         if font_name:
             self.city_font = pygame.font.Font(font_name, Config.CITY_FONT_SIZE) # フォント設定
             self.route_font = pygame.font.Font(font_name, Config.ROUTE_FONT_SIZE) # フォント設定
         else:
             raise ValueError(f"Cannot find font named {Config.FONT_NAME}")
 
-        # ボタンリスト
-        self.buttons = self._create_buttons(screen)
-
-        # 都市表示円の大きさ
-        width, height = screen.get_size()
-        city_radius = min(width, height)*Config.CITY_RADIUS_RATIO
-        self.city_radius = max(city_radius, Config.MINIMUM_CITY_RADIUS)
-
         # TSP
         self.tsp = None
-
-        # プレーヤーが入力したルート情報
-        self.player_route = []
 
     def set_tsp(self, tsp):
         self.tsp = tsp
@@ -114,6 +107,11 @@ class Main_Screen:
         buttons = {}
         for i, button_name in enumerate(self.BUTTONS):
             buttons[button_name] = Button(x_start + (Config.BUTTON_WIDTH + Config.BUTTON_GAP) * i, y_pos, Config.BUTTON_WIDTH, Config.BUTTON_HEIGHT, text=button_name)
+
+        """ 入力の配置を動的に決定 """
+        x_start = calculate_x_start(len(self.INPUTS))
+        y_pos = height - Config.UI_HEIGHT + (Config.UI_HEIGHT - Config.BUTTON_HEIGHT) // 2
+        INPUT_box1 = InputBox(100, 100, 140, 32)
 
         return buttons
     

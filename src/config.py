@@ -3,12 +3,19 @@ from dataclasses import dataclass
 # デモの設定値はここで一括管理
 @dataclass(frozen=True)
 class Config:
+    """ 画面の状態を管理 """
+    MAIN_SCREEN = "main"
+    SETTINGS_SCREEN = "settings"
+
     """ 可視化で使う設定 """
     WHITE = (255, 255, 255)  # 白色
     LIGHT_GRAY: tuple = (200, 200, 200)  # ライトグレー
     GRAY: tuple = (100, 100, 100)  # グレー
     DRAK_GRAY: tuple = (50, 50, 50)  # ダークグレー
     BLACK = (0, 0, 0)  # 黒色
+    LIGHT_BLUE = (0, 150, 255)  # ライトブルー
+    LIGHT_SKY_BLUE = (141, 182, 205)  # ライトスカイブルー3
+    DODGER_BLUE = (28, 134, 238)  # ダガーブルー
 
     FONT_SIZE: int = 16  # フォントサイズ
     FONT_NAME: str = 'notosansmonocjkjp'  # Ubuntu18.04 標準日本語フォント
@@ -18,9 +25,17 @@ class Config:
     DEFAULT_WIDTH: int = 800  # 初期画面幅
     DEFAULT_HEIGHT: int = 600  # 初期画面高さ
     UI_HEIGHT: int = 60  # UIエリアの高さ
-    DSP_HEIGHT: int = 60  # DSPエリアの高さ
+    DSP_HEIGHT: int = 70  # DSPエリアの高さ
 
     MAIN_BG_COLOR: tuple = LIGHT_GRAY  # メイン画面の背景色
+    CITY_COLOR: tuple = LIGHT_BLUE  # 都市の色
+    CITY_COLOR_SELECTED: tuple = DRAK_GRAY  # 選択済み都市の色
+    LINE_COLOR: tuple = BLACK  # 経路の線の色
+    CITY_RADIUS_RATIO: float = 0.02  # 画面横サイズに対する都市サイズの割合
+    MINIMUM_CITY_RADIUS: int = 8  # 都市円の描画サイズの下限
+    CITY_FONT_SIZE: int = 18  # 都市のフォントサイズ
+    CITY_TEXT_COLOR: tuple = BLACK  # 都市テキストの色
+    CITY_TEXT_OFFSET: int = 7  # 都市テキストオフセット
 
     UI_BG_COLOR: tuple = BLACK  # UI画面の背景色
     BUTTON_COLOR: tuple = DRAK_GRAY  # ボタンの基本色
@@ -32,15 +47,13 @@ class Config:
     BUTTON_TEXT_COLOR: tuple = WHITE  # ボタンのテキストの色
     
     DSP_BG_COLOR: tuple = WHITE  # DSP画面の背景色
-    CITY_COLOR: tuple = (0, 150, 255)  # 都市の色（ライトブルー）
-    LINE_COLOR: tuple = BLACK  # 経路の線の色
-    TEXT_COLOR: tuple = WHITE  # テキストの色
+    ROUTE_FONT_SIZE: int = 24  # ボタンのフォントサイズ
+    ROUTE_TEXT_COLOR: tuple = BLACK  # ボタンのテキストの色
+
+    INPUT_FONT_SIZE: int = 16  # 入力ボックスのフォントサイズ
+    INPUT_COLOR_INACTIVE: tuple = LIGHT_SKY_BLUE  # 入力ボックスの色（非アクティブ）
+    INPUT_COLOR_ACTIVE: tuple = DODGER_BLUE  # 入力ボックスの色（アクティブ）
     
-    INPUT_BOX_COLOR: tuple = (200, 200, 200)  # 入力ボックスの色（ライトグレー）
-
-    CITY_RADIUS_RATIO: float = 0.05  # 画面横サイズに対する都市サイズの割合
-    MINIMUM_CITY_RADIUS: int = 8  # 都市円の描画サイズの下限
-
 
     MARGIN_RATIO: float = 0.05  # 画面の5%を余白として確保
 
