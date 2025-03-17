@@ -26,16 +26,10 @@ class Main_Screen:
         city_radius = min(width, height)*Config.CITY_RADIUS_RATIO
         self.city_radius = max(city_radius, Config.MINIMUM_CITY_RADIUS)
 
-        # TSP
-        self.tsp = None
-
         # プレーヤーが入力したルート情報
         self.player_route = []
 
-    def set_tsp(self, tsp):
-        self.tsp = tsp
-
-    def handle_events(self, events, screen):
+    def handle_events(self, events, screen, tsp):
         running = True
         current_screen = Config.MAIN_SCREEN
         for event in events:
@@ -48,13 +42,13 @@ class Main_Screen:
                 city_radius = min(width, height)*Config.CITY_RADIUS_RATIO
                 self.city_radius = max(city_radius, Config.MINIMUM_CITY_RADIUS)
             elif event.type == pygame.MOUSEBUTTONDOWN:
-                running, current_screen = self._handle_click(event.pos, screen)
+                running, current_screen = self._handle_click(event.pos, screen, tsp)
             elif event.type == pygame.KEYDOWN:
                 running, current_screen = self._handle_key(event, screen)
 
         return running, current_screen, screen
 
-    def draw(self, screen):
+    def draw(self, screen, tsp):
         width, height = screen.get_size()
         """ 背景設定 """
         screen.fill(Config.MAIN_BG_COLOR)  # 都市を表示する領域
@@ -63,7 +57,7 @@ class Main_Screen:
 
         """ 都市ルートの描画 """
         # 都市円の描画
-        for i, city in enumerate(self.tsp.cities):
+        for i, city in enumerate(tsp.cities):
             screen_x, screen_y = self._coord_to_screen(city, screen)
             if i in self.player_route:
                 pygame.draw.circle(screen, Config.CITY_COLOR_SELECTED, (screen_x, screen_y), self.city_radius)
@@ -76,15 +70,15 @@ class Main_Screen:
         # ルートの描画
         if len(self.player_route) > 1:
             for i in range(len(self.player_route) - 1):
-                city1 = self._coord_to_screen(self.tsp.cities[self.player_route[i]], screen)
-                city2 = self._coord_to_screen(self.tsp.cities[self.player_route[i + 1]], screen)
+                city1 = self._coord_to_screen(tsp.cities[self.player_route[i]], screen)
+                city2 = self._coord_to_screen(tsp.cities[self.player_route[i + 1]], screen)
                 pygame.draw.line(screen, Config.LINE_COLOR, city1, city2, 2)
 
             # 最後の都市から最初の都市へ閉じる（巡回ルート）
-            if len(self.player_route) == self.tsp.num_cities:
+            if len(self.player_route) == tsp.num_cities:
                 pygame.draw.line(screen, Config.LINE_COLOR, 
-                                 self._coord_to_screen(self.tsp.cities[self.player_route[-1]], screen), 
-                                 self._coord_to_screen(self.tsp.cities[self.player_route[0]], screen), 2)
+                                 self._coord_to_screen(tsp.cities[self.player_route[-1]], screen), 
+                                 self._coord_to_screen(tsp.cities[self.player_route[0]], screen), 2)
         
         """ コンソールの描画 """
         width, height = screen.get_size()
@@ -93,8 +87,8 @@ class Main_Screen:
         # y_pos = height - (Config.UI_HEIGHT + Config.DSP_HEIGHT) + (Config.DSP_HEIGHT - Config.FONT_SIZE) // 2
         y_pos = height - (Config.UI_HEIGHT + Config.DSP_HEIGHT)
         screen.blit(text_surface, (10, y_pos))
-        if len(self.player_route) == self.tsp.num_cities:
-            result_text = f"  総ルート長： {self.tsp.compute_route_distance(self.player_route):.3f}"
+        if len(self.player_route) == tsp.num_cities:
+            result_text = f"  総ルート長： {tsp.compute_route_distance(self.player_route):.3f}"
             text_surface = self.route_font.render(result_text, True, Config.ROUTE_TEXT_COLOR)
             screen.blit(text_surface, (10, y_pos + Config.ROUTE_FONT_SIZE + 5))
 
@@ -130,7 +124,7 @@ class Main_Screen:
         
         return screen_x, screen_y
     
-    def _handle_click(self, pos, screen):
+    def _handle_click(self, pos, screen, tsp):
         running = True
         current_screen = Config.MAIN_SCREEN
         """ クリック処理（都市 or ボタン） """
@@ -146,7 +140,7 @@ class Main_Screen:
                     running = False
 
         # 都市の選択処理
-        for i, city in enumerate(self.tsp.cities):
+        for i, city in enumerate(tsp.cities):
             screen_x, screen_y = self._coord_to_screen(city, screen)
 
             if np.linalg.norm(np.array(pos) - np.array([screen_x, screen_y])) < self.city_radius*1.2:

@@ -24,9 +24,6 @@ class Launcher:
         for _ in range(Config.DEFAULT_OBJECTIVES):
             self.tsp = TSP(num_cities=Config.DEFAULT_CITIES, coord_min=Config.COORD_MIN, coord_max=Config.COORD_MAX)
 
-        self.main_screen.set_tsp(self.tsp)
-        self.setting_screen.set_tsp(self.tsp)
-
         """ GAの初期設定 """
         rng = np.random.default_rng(42)
 
@@ -36,11 +33,11 @@ class Launcher:
         while self.running:
             events = pygame.event.get()
             if self.current_screen == Config.MAIN_SCREEN:
-                self.running, self.current_screen, self.screen = self.main_screen.handle_events(events, self.screen)
-                self.main_screen.draw(self.screen)
+                self.running, self.current_screen, self.screen = self.main_screen.handle_events(events, self.screen, self.tsp)
+                self.main_screen.draw(self.screen, self.tsp)
             if self.current_screen == Config.SETTINGS_SCREEN:
-                self.running, self.current_screen, self.screen = self.setting_screen.handle_events(events, self.screen)
-                self.setting_screen.draw(self.screen)
+                self.running, self.current_screen, self.screen = self.setting_screen.handle_events(events, self.screen, self.tsp)
+                self.setting_screen.draw(self.screen, self.tsp)
             # self.screen.fill(Config.BG_COLOR)
             # self.handle_events()
             # self.draw()

@@ -50,6 +50,7 @@ class Config:
     ROUTE_FONT_SIZE: int = 24  # ボタンのフォントサイズ
     ROUTE_TEXT_COLOR: tuple = BLACK  # ボタンのテキストの色
 
+    """ 設定画面 """
     INPUT_FONT_SIZE: int = 16  # 入力ボックスのフォントサイズ
     INPUT_COLOR_INACTIVE: tuple = LIGHT_SKY_BLUE  # 入力ボックスの色（非アクティブ）
     INPUT_COLOR_ACTIVE: tuple = DODGER_BLUE  # 入力ボックスの色（アクティブ）

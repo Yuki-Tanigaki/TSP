@@ -33,10 +33,15 @@ class Button:
     
 class InputBox:
     def __init__(self, x, y, w, h, text=''):
+        font_name = pygame.font.match_font(Config.FONT_NAME)
+        if font_name:
+            self.font = pygame.font.Font(font_name, Config.INPUT_FONT_SIZE) # フォント設定
+        else:
+            raise ValueError(f"Cannot find font named {Config.FONT_NAME}")
         self.rect = pygame.Rect(x, y, w, h)
         self.color = Config.INPUT_COLOR_INACTIVE
         self.text = text
-        self.txt_surface = FONT.render(text, True, self.color)
+        self.txt_surface = self.font.render(text, True, self.color)
         self.active = False
     def handle_event(self, event):
         r = ""
@@ -57,7 +62,7 @@ class InputBox:
                     self.text = self.text[:-1]
                 else:
                     self.text += event.unicode
-                self.txt_surface = FONT.render(self.text, True, self.color)
+                self.txt_surface = self.font.render(self.text, True, self.color)
         return r
     def update(self):
         width = max(200, self.txt_surface.get_width()+10)
